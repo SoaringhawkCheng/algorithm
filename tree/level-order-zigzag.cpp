@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <algorithm>
 
 using namespace std;
 
@@ -22,13 +21,14 @@ public:
     // FIFO的queue维护每行的节点
     // current queue生成next queue
     // current queue pop空，生成行遍历数据，再与next交换
-    // 最后将结果reverse
-    vector<vector<int>> levelOrderBottom(TreeNode *root) {
+    // 根据left_to_right决定是否要reverse level
+    vector<vector<int>> levelOrderZigzag(TreeNode *root) {
         vector<vector<int>> result;
 
         if (root == NULL) return result;
 
         queue<TreeNode *> current, next;
+        bool left_to_right = true;
         current.push(root);
 
         while (!current.empty()) {
@@ -40,10 +40,11 @@ public:
                 if (node->left != NULL) next.push(node->left);
                 if (node->right != NULL) next.push(node->right);
             }
+            if (!left_to_right) reverse(level.begin(),level.end());
             result.push_back(level);
             swap(next, current);
+            left_to_right = !left_to_right;
         }
-        reverse(result.begin(),result.end());
         return result;
     }
 };
@@ -63,7 +64,7 @@ int main() {
     treelist[4].right = &treelist[7];
 
     Solution s = Solution();
-    vector<vector<int>> result = s.levelOrderBottom(root);
+    vector<vector<int>> result = s.levelOrderZigzag(root);
     for (int i = 0; i < result.size(); i++) {
         vector<int> level = result[i];
         for (int j = 0; j < level.size(); j++)

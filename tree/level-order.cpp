@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <vector>
-#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -18,20 +18,30 @@ struct TreeNode {
 
 class Solution {
 public:
-    // curr=root
-    // 遍历左子树，推入
-    // 如果栈顶元素有右子树，curr=top->right，重新走流程
-    // 如果栈顶元素没有右子树，推出，加入结果，prev=curr(防止重复访问右子树),curr=NULL(防止重复访问右子树)
-    // 为防止重复访问右子树，需要prev
-    vector<int> levelOrder(TreeNode *root) {
+    // FIFO的queue维护每行的节点
+    // current queue生成next queue
+    // current queue pop空，生成行遍历数据，再与next交换
+    vector<vector<int>> levelOrder(TreeNode *root) {
         vector<vector<int>> result;
 
-        if(root==NULL) return result;
+        if (root == NULL) return result;
 
-        queue<TreeNode*> current, next;
-        current.push();
+        queue<TreeNode *> current, next;
+        current.push(root);
 
-        while() {}
+        while (!current.empty()) {
+            vector<int> level;
+            while (!current.empty()) {
+                TreeNode *node = current.front();
+                current.pop();
+                level.push_back(node->val);
+                if (node->left != NULL) next.push(node->left);
+                if (node->right != NULL) next.push(node->right);
+            }
+            result.push_back(level);
+            swap(next, current);
+        }
+        return result;
     }
 };
 
@@ -50,7 +60,12 @@ int main() {
     treelist[4].right = &treelist[7];
 
     Solution s = Solution();
-    vector<int> result = s.postorderTraversal(root);
-    for (int i = 0; i < result.size(); i++) cout << result[i] << " ";
+    vector<vector<int>> result = s.levelOrder(root);
+    for (int i = 0; i < result.size(); i++) {
+        vector<int> level = result[i];
+        for (int j = 0; j < level.size(); j++)
+            cout << level[j] << " ";
+        cout << endl;
+    }
     cout << endl;
 }
