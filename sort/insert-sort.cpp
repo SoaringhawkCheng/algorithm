@@ -12,29 +12,13 @@ public:
     void insertSort(vector<int> &nums) {
         int size = nums.size();
         for (int i = 1; i < size; i++) {
-            cout << "before: ";
-            for (int k = 0; k <= i; k++) {
-                cout << nums[k] << " ";
-            }
-            cout << endl;
             int num = nums[i];
             int j=i-1;
-            while (j >= 0) {
-                if (nums[j] > num) nums[j+1]=nums[j];
-
+            while(j>=0&&nums[j]>num) {
+                nums[j+1]=nums[j];
+                j--;
             }
-            for (int j = i - 1; j >= 0; j--) {
-                if (nums[j] > num) nums[j + 1] = nums[j];
-                else {
-                    nums[j + 1] = num;
-                    break;
-                }
-            }
-            cout << "end: ";
-            for (int k = 0; k <= i; k++) {
-                cout << nums[k] << " ";
-            }
-            cout << endl;
+            nums[j+1]=num;
         }
     }
 };
