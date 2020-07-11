@@ -1,58 +1,37 @@
-#include<iostream>
-#include<vector>
-#include<stack>
-#include<unordered_map>
+#include <iostream>
+#include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-
-    TreeNode(int val) : val(val), left(NULL), right(NULL) {}
-};
-
-class Solution {
+class Solution{
 public:
-    vector<vector<int>> find_path(TreeNode *root, int target) {
+    vector<vector<int>> permutation(vector<int> nums) {
         vector<vector<int>> result;
-        if (root == NULL) return result;
+        if (nums.size()==0) return result;
 
-        stack<TreeNode *> stk;
+        unordered_map<int, bool> used;
+        for (auto num:nums) used[num]=false;
         vector<int> path;
-        stk.push(root);
-        path.push_back(root->val);
-        int sum = root->val;
-        dfs(stk, path, sum, target, result);
+
+        permutation(result, used, path, nums);
         return result;
     }
 
-    void dfs(stack<TreeNode *> &stk, vector<int> &path, int &sum, const int &target, vector<vector<int>> &result) {
-        auto curr = stk.top();
-
-        if (curr->left == NULL && curr->right == NULL) {
-            if (sum == target) result.push_back(path);
+private:
+    void permutation(vector<vector<int>> &result, unordered_map<int, bool> &used, vector<int> &path, vector<int> &nums) {
+        if (path.size()==nums.size()) {
+            result.push_back(path);
             return;
         }
-
-        if (curr->left) {
-            stk.push(curr->left);
-            path.push_back(curr->left->val);
-            sum = sum + curr->left->val;
-            dfs(stk, path, sum, target, result);
-            sum = sum - curr->left->val;
-            stk.pop();
-            path.pop_back();
-        }
-        if (curr->right) {
-            stk.push(curr->right);
-            path.push_back(curr->right->val);
-            sum = sum + curr->right->val;
-            dfs(stk, path, sum, target, result);
-            sum = sum - curr->right->val;
-            stk.pop();
-            path.pop_back();
+        for (auto num: nums) {
+            if (used[num]) continue;
+            used[num]=true;
+            path.push_back(num);
+            permutation(result, used, path, nums);
+            path.pop_back(num);
+            used[num]=false;
         }
     }
 };
+
